@@ -1,6 +1,7 @@
 {% extends 'cabinet_index.html' %}
 {% block breadcrumbs_item %}
   <li><a href="{% url 'surface:list' %}">Список поверхностей</a></li>
+  <li><a href="{% url 'surface:update' surface.id %}">{{ surface }}</a></li>
   <li class="active">Редактирование рекламной поверхности</li>
 {% endblock %}
 {% block content %}
@@ -10,7 +11,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="row page-top">
-              <div class="col-md-12">Подъезды</div>
+              <div class="col-md-12">Подъезды, {{ surface }}</div>
               <div class="clearfix"></div>
             </div>
           </div>

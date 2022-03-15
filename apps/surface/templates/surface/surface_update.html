@@ -1,6 +1,7 @@
 {% extends 'cabinet_index.html' %}
 {% block breadcrumbs_item %}
   <li><a href="{% url 'surface:list' %}">Список поверхностей</a></li>
+  <li><a href="{% url 'surface:update' object.id %}">{{ object }}</a></li>
   <li class="active">Редактирование рекламной поверхности</li>
 {% endblock %}
 {% block content %}
