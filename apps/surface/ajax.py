@@ -1,11 +1,14 @@
-# coding=utf-8
 from datetime import datetime
-from PIL import Image
 from random import randint
+
 from annoying.decorators import ajax_request
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from PIL import Image
+
 from apps.adjuster.models import SurfacePhoto
 from apps.city.models import Surface
+from apps.client.models import Client
 
 __author__ = 'alexy'
 
@@ -96,3 +99,21 @@ def surface_map(request):
     return {
         'surface_list': surface_list
     }
+
+
+@ajax_request
+def surfaces_clients_by_dates(request):
+    """ Показываем в фильтре только тех клиентов, у которых в данном диапазоне даты есть заказы """
+    date_start = datetime.strptime(request.GET.get('date_start'), '%d.%m.%Y')
+    date_end = datetime.strptime(request.GET.get('date_end'), '%d.%m.%Y')
+    city_id = request.GET.get('city_id', None)
+    qs = Client.objects.filter(
+        (
+            Q(clientorder__date_start__gte=date_start)
+            | Q(clientorder__date_end__gte=date_start)
+        )
+        & Q(clientorder__date_start__lte=date_end)
+    ).distinct()
+    if city_id:
+        qs = qs.filter(city_id=city_id)
+    return {'clients': [{'id': c.id, 'legal_name': c.legal_name} for c in qs]}

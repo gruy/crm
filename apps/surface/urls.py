@@ -3,7 +3,7 @@ from django.urls import include, path, re_path
 from django.contrib.auth.decorators import login_required
 from apps.surface.data_import import address_list_import
 from .views import *
-from .ajax import surface_map, ajax_photo_rotate
+from .ajax import surface_map, ajax_photo_rotate, surfaces_clients_by_dates
 
 __author__ = 'alexy'
 
@@ -31,4 +31,5 @@ urlpatterns = [
     re_path(r'^export/docx/fromfile/$', SurfaceDocViewWithFile.as_view(), name='export-docx-from-file'),
     re_path(r'^update_company/$', update_company, name='update_company'),
     re_path(r'^photo-rotate/$', ajax_photo_rotate, name='photo-rotate'),
+    path('surfaces/clients/', surfaces_clients_by_dates, name='surfaces-clients-by-date'),
 ]

@@ -1,25 +1,26 @@
+import datetime
 import os
 import uuid
 import zipfile
 from io import BytesIO
 
-from django.conf import settings
-from django.db.models import Q, QuerySet, Sum
 import xlwt
-import datetime
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q, QuerySet, Sum
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, TemplateView, UpdateView, DeleteView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView, UpdateView
 from docxtpl import DocxTemplate
 
 from apps.adjuster.models import SurfacePhoto
+from apps.city.models import Area, City, ManagementCompany, Porch, Street, Surface, SurfaceDocTemplate
 from apps.client.models import Client, ClientOrderSurface, ClientSurfaceBind
 from lib.cbv import DocResponseMixin
-from .forms import SurfaceAddForm, PorchAddForm, SurfacePhotoForm, SurfaceImportForm
-from apps.city.models import City, Area, Surface, Street, Porch, ManagementCompany, SurfaceDocTemplate
+
+from .forms import PorchAddForm, SurfaceAddForm, SurfaceImportForm, SurfacePhotoForm
 
 __author__ = 'alexy'
 
@@ -28,6 +29,13 @@ class SurfaceListView(ListView):
     model = Surface
     template_name = 'surface/surface_list.html'
     paginate_by = 25
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.city_id: int = 0
+        self.date_start = None
+        self.date_end = None
+        self.client_surface: int = 0
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
@@ -83,10 +91,13 @@ class SurfaceListView(ListView):
                 qs = qs.filter(management__isnull=True)
             else:
                 qs = qs.filter(management=int(self.request.GET.get('management')))
-        if self.request.GET.get('city') and int(self.request.GET.get('city')) != 0:
-            qs = qs.filter(city=int(self.request.GET.get('city')))
+
+        self.city_id = int(self.request.GET.get('city', 0))
+        if self.city_id:
+            qs = qs.filter(city=self.city_id)
         else:
             qs = qs.none()
+
         if self.request.GET.get('area') and int(self.request.GET.get('area')) != 0:
             qs = qs.filter(street__area=int(self.request.GET.get('area')))
         if self.request.GET.get('street') and self.request.GET.get('street') != '':
@@ -135,7 +146,9 @@ class SurfaceListView(ListView):
         # фильтруем поверхности по зоне покрытия клиента
         self.client_surface = int(self.request.GET.get('client_surface', 0))
         if self.client_surface:
-            surfaces = ClientSurfaceBind.objects.filter(client__id=self.client_surface).values_list('surface', flat=True)
+            surfaces = ClientSurfaceBind.objects.filter(
+                client__id=self.client_surface
+            ).values_list('surface', flat=True)
             qs = qs.filter(id__in=surfaces)
 
         qs = qs.extra(select={'house_number_int': 'CAST(house_number AS INTEGER)'})
@@ -156,13 +169,18 @@ class SurfaceListView(ListView):
         surface_count = surface_qs.count()
         # for surface in surface_qs:
         #     porch_count += surface.porch_count()
-        today = datetime.datetime.today()
+
+        # показываем в фильтре только тех клиентов, у которых в данном диапазоне даты есть заказы
         client_qs = Client.objects.filter(
-            clientorder__clientordersurface__surface__in=self.get_qs(),
-            clientorder__date_end__gte=today
+            (
+                Q(clientorder__date_start__gte=self.date_start)
+                | Q(clientorder__date_end__gte=self.date_start)
+            )
+            & Q(clientorder__date_start__lte=self.date_end)
         ).distinct()
-        if self.request.GET.get('city'):
-            client_qs = client_qs.filter(city_id=self.request.GET.get('city'))
+        if self.city_id:
+            client_qs = client_qs.filter(city_id=self.city_id)
+
         context.update({
             'import_form': SurfaceImportForm(),
             'porch_count': porch_count,
@@ -187,8 +205,8 @@ class SurfaceListView(ListView):
             qs = None
             management_qs = None
 
-        if self.request.GET.get('city'):
-            management_qs = management_qs.filter(city_id=self.request.GET.get('city'))
+        if self.city_id:
+            management_qs = management_qs.filter(city_id=self.city_id)
 
         context.update({
             'city_list': qs,
@@ -200,11 +218,11 @@ class SurfaceListView(ListView):
                 'client_id': int(self.request.GET.get('client'))
             })
 
-        if self.request.GET.get('city'):
-            area_qs = Area.objects.filter(city__id=int(self.request.GET.get('city')))
+        if self.city_id:
+            area_qs = Area.objects.filter(city__id=self.city_id)
             context.update({
                 'area_list': area_qs,
-                'city_id': int(self.request.GET.get('city'))
+                'city_id': self.city_id
             })
             if self.request.GET.get('area'):
                 context.update({
