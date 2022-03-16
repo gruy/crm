@@ -37,7 +37,7 @@ def get_simple_city_map(request):
 def get_city_area(request):
     """
     получение списка районов данного города.
-    Опционально - список монтажников данного города
+    Опционально - список монтажников данного города и УК
     """
     if request.GET.get('city'):
         area_list = []
@@ -54,7 +54,7 @@ def get_city_area(request):
             clientorder__clientordersurface__surface__city_id=int(r_city),
             clientorder__date_end__gte=today
         ).distinct()
-        management_qs = ManagementCompany.objects.filter(city_id=int(r_city))
+        management_qs = ManagementCompany.objects.filter(city_id=int(r_city)).order_by('name')
         for i in area_qs:
             area_list.append({
                 'id': i.id,

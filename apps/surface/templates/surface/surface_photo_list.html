@@ -53,6 +53,17 @@
               <div class="five-col-1">
                 <input type="text" name="a_house_number" id="id_a_house_number" placeholder="номер дома" class="form-control input-sm" value="{{ a_house_number|default:'' }}">
               </div>
+              <div class="five-col-2">
+                <select name="management_id" id="management_filter" class="form-control input-sm" >
+                  <option value="0">--- Управляющая компания ---</option>
+                  <option value="-1" {% if management_id == -1 %}selected="selected"{% endif %}>УК не указана</option>
+                  {% if management_list %}
+                    {% for management in management_list %}
+                    <option value="{{ management.id }}" {% if management.id == management_id %}selected="selected"{% endif %}>{{ management.name }}</option>
+                    {% endfor %}
+                  {% endif %}
+                </select>
+              </div>
               {% if show_broken %}
                 <div class="five-col-1">
                   <select name="broken_type" id="id_broken_type" class="form-control input-sm">
@@ -70,7 +81,7 @@
                 <input class="btn btn-search" type="submit" value="Искать">
               </div>
               <div class="five-col-1">
-                <a href="{% url 'surface:photo-zip-list' %}?&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" class="btn btn-save" type="button">Скачать архив</a>
+                <a href="{% url 'surface:photo-zip-list' %}?&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" class="btn btn-save" type="button">Скачать архив</a>
               </div>
               <div class="clearfix"></div>
             </div>
@@ -83,12 +94,12 @@
               <div class="col-md-8 add-bottom">
               {% if user.type != 3 %}
                 {% if show_broken %}
-                <a href="{{ request.path }}?broken=0&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Показать целые</a>
+                <a href="{{ request.path }}?broken=0&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Показать целые</a>
                 {% else %}
-                  <a href="{{ request.path }}?broken=1&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench"></span> Показать повреждённые</a>
+                  <a href="{{ request.path }}?broken=1&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench"></span> Показать повреждённые</a>
                 {% endif %}
               {% else %}
-                <a href="{% url 'client:download-archive' %}?a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" id="js-download-archive" class="btn btn-success" target="_blank" onclick="return location.href = '{% url 'surface:photo-list' %}'">
+                <a href="{% url 'client:download-archive' %}?a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" id="js-download-archive" class="btn btn-success" target="_blank" onclick="return location.href = '{% url 'surface:photo-list' %}'">
                   <span class="glyphicon glyphicon-download-alt"></span>  Скачать архив
                 </a>
       {#          <button data-url="{% url 'client:download-archive' %}" id="js-download-archive" class="btn btn-success">#}
@@ -96,11 +107,11 @@
       {#          </button>#}
               {% endif %}
                 {% if grid %}
-                <a href="{{ request.path }}?grid=0&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" class="btn btn-info" title="Показать таблицей">
+                <a href="{{ request.path }}?grid=0&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" class="btn btn-info" title="Показать таблицей">
                   <span class="glyphicon glyphicon-th-list"></span> Показать таблицей
                 </a>
               {% else %}
-                <a href="{{ request.path }}?grid=1&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}" class="btn btn-info" title="Показать плиткой">
+                <a href="{{ request.path }}?grid=1&a_city={{ a_city|default:'' }}&a_area={{ a_area|default:'' }}&a_street={{ a_street|default:'' }}&a_date_s={{ a_date_s|default:'' }}&a_date_e={{ a_date_e|default:'' }}&a_house_number={{ a_house_number|default:'' }}&broken_type={{ broken_type|default:'' }}&management_id={{ management_id|default:0 }}" class="btn btn-info" title="Показать плиткой">
                   <span class="glyphicon glyphicon-th"></span> Показать плиткой
                 </a>
               {% endif %}
@@ -172,7 +183,8 @@
                     {% else %}
                       {{ item.address }}<br />Подъезд: {{ item.porch.number }}
                     {% endif %}<br />
-                    Дата: {{ item.date }}
+                    Дата: {{ item.date }}<br />
+                    {{ item.porch.surface.management.name }}
                     {% if item.adjuster %}
                       <br>{{ item.adjuster.user.first_name }} {{ item.adjuster.user.last_name }}
                     {% endif %}
@@ -197,6 +209,7 @@
                   <th>Дом</th>
                   <th>Подъезд</th>
                   <th>Дата</th>
+                  <th>УК</th>
                   <th>&nbsp;</th>
                 </tr>
               </thead>
@@ -215,6 +228,7 @@
                 <td>{{ item.porch.surface.house_number }}</td>
                 <td>{{ item.porch.number }}</td>
                 <td>{{ item.date }}</td>
+                <td>{{ item.porch.surface.management.name }}</td>
                 <td><a href="{{ item.image.url }}" rel="group" class="js-gallery" title="{{ item.address }}, подъезд {{ item.porch.number }}">
                     <span class="glyphicon glyphicon-zoom-in"></span>
                   </a></td>

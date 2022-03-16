@@ -1081,7 +1081,6 @@ $(function() {
       }).done(function(data) {
         if (data.area_list) {
           var area_list = data.area_list;
-          console.log(area_list);
           aff.find('#id_a_area').find('option').remove();
           aff.find('#id_a_area').append($("<option/>", {
                 value: '',
@@ -1096,6 +1095,23 @@ $(function() {
             aff.find('#id_a_area').append($("<option/>", {
                 value: area_list[i]['id'],
                 text: area_list[i]['name']
+            }));
+          }
+        }
+        if (data.management_list) {
+          aff.find('#management_filter').find('option').remove();
+          aff.find('#management_filter').append($("<option/>", {
+            value: '0',
+            text: '--- Управляющая компания ---'
+          }));
+          aff.find('#management_filter').append($("<option/>", {
+            value: '-1',
+            text: 'УК не указана'
+          }));
+          for (var i = 0; i < data.management_list.length; i++) {
+            aff.find('#management_filter').append($("<option/>", {
+                value: data.management_list[i]['id'],
+                text: data.management_list[i]['name']
             }));
           }
         }

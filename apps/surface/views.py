@@ -664,9 +664,19 @@ class SurfacePhotoListView(ListView):
             date_e = datetime.datetime.strptime(filter_args['a_date_e'], '%d.%m.%Y') + \
                      datetime.timedelta(hours=23, minutes=59, seconds=59)
             a_qs = a_qs.filter(date__lte=date_e)
-        return a_qs.select_related('porch', 'porch__surface', 'porch__surface__street',
-                                   'porch__surface__street__area', 'porch__surface__city', 'adjuster',
-                                   'adjuster__user')
+
+        if filter_args['management_id'] == -1:
+            a_qs = a_qs.filter(porch__surface__management__isnull=True)
+        elif filter_args['management_id'] > 0:
+            a_qs = a_qs.filter(porch__surface__management=filter_args['management_id'])
+
+        # a_qs = a_qs.extra(select={'house_number_int': 'CAST(house_number AS INTEGER)'})
+        # a_qs = a_qs.order_by('porch__surface__street__area', 'porch__surface__street__name', 'house_number_int')
+        a_qs = a_qs.select_related(
+            'porch', 'porch__surface', 'porch__surface__management', 'porch__surface__street',
+            'porch__surface__street__area', 'porch__surface__city', 'adjuster', 'adjuster__user',
+        )
+        return a_qs
 
     def grid_display(self):
         """
@@ -718,6 +728,23 @@ class SurfacePhotoListView(ListView):
         a_date_s = self.request.GET.get('a_date_s') or None
         # установка флага начальной даты для фильтрации
         a_date_e = self.request.GET.get('a_date_e') or None
+
+        user = self.request.user
+        management_list = ManagementCompany.objects.none()
+        if user.type == 1:
+            management_list = ManagementCompany.objects.all()
+        elif user.type == 6:
+            management_list = ManagementCompany.objects.filter(city__in=user.superviser.city_id_list())
+        elif user.type == 2:
+            management_list = ManagementCompany.objects.filter(city__moderator=user)
+        elif user.type == 5:
+            management_list = ManagementCompany.objects.filter(city__moderator=user.manager.moderator)
+        if a_city:
+            management_list = management_list.filter(city_id=a_city)
+        management_list = management_list.order_by('name')
+
+        management_id = int(self.request.GET.get('management_id', 0))
+
         return {
             'a_city': a_city,
             'a_area': a_area,
@@ -727,7 +754,9 @@ class SurfacePhotoListView(ListView):
             'area_list': area_list,
             'street_list': street_list,
             'broken_type': broken_type,
-            'a_house_number': a_house_number
+            'a_house_number': a_house_number,
+            'management_list': management_list,
+            'management_id': management_id,
         }
 
     def get_context_data(self, **kwargs):
