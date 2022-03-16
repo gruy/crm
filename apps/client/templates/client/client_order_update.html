@@ -123,9 +123,14 @@
             </div>
           </form>
         {% endif %}
+          <div class="col-md-6">
+            <div class="form-group">
+              <input class="form-control" id="table_filter" type="text" placeholder="Поиск по адресу...">
+            </div>
+          </div>
           <form action="{% url 'client:order-remove' %}" method="post" class="js-remove-item-form">{% csrf_token %}
           <div class="col-md-12 surface-list">
-            <table class="table table-hover table-condensed table-bordered table-list">
+            <table class="table table-hover table-condensed table-bordered table-list" id="order_table">
               <thead>
                 <tr>
                   <th>Район</th>
@@ -186,4 +191,16 @@
     <button class="js-btn-remove-success btn-success">Да</button>
     <button class="js-btn-remove-cancel btn-danger">Нет</button>
   </div>
+{% endblock %}
+
+
+{% block bottom_js %}
+  {{ block.super }}
+  <script>
+    $(document).ready(function(){
+      $(function(){
+        $('#order_table').filterTable('#table_filter');
+      });
+    });
+  </script>
 {% endblock %}
