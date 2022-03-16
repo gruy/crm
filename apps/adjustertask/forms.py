@@ -1,21 +1,14 @@
-import datetime
-
 from django import forms
+
 from apps.adjuster.models import Adjuster, AdjusterTask, AdjusterTaskSurface
-from apps.city.models import City, Surface, Area
+from apps.city.models import Area, City
 from apps.client.models import Client, ClientOrder
-from core.models import User
 
 __author__ = 'alexy'
 
 
 class AdjusterTaskClientForm(forms.ModelForm):
-    TYPE_CHOICES = (
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        # (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
-    )
+    TYPE_CHOICES = ((c[0], c[1]) for c in AdjusterTask.TYPE_CHOICES if c[0] != 2)
 
     client = forms.ModelChoiceField(
         queryset=Client.objects.all(),
@@ -27,6 +20,7 @@ class AdjusterTaskClientForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}))
     type = forms.ChoiceField(
         choices=TYPE_CHOICES,
+        initial=1,
         label=u'Тип работы',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
@@ -43,6 +37,16 @@ class AdjusterTaskClientForm(forms.ModelForm):
 
 
 class AdjusterTaskClientAddForm(forms.ModelForm):
+    TYPE_CHOICES = ((c[0], c[1]) for c in AdjusterTask.TYPE_CHOICES if c[0] != 2)
+
+    client = forms.ModelChoiceField(queryset=Client.objects.all(), label=u'Клиент', widget=forms.Select(attrs={'class': 'form-control'}))
+    type = forms.ChoiceField(
+        choices=TYPE_CHOICES,
+        initial=1,
+        label=u'Тип работы',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = AdjusterTask
         fields = ('adjuster', 'type', 'date', 'comment')
@@ -52,21 +56,6 @@ class AdjusterTaskClientAddForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'class': 'form-control ', 'autocomplete': 'off'}),
             'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': u'Текст комментария к задаче'}),
         }
-
-    TYPE_CHOICES = (
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        # (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
-    )
-
-    client = forms.ModelChoiceField(queryset=Client.objects.all(), label=u'Клиент', widget=forms.Select(attrs={'class': 'form-control'}))
-    # clientorder = forms.ChoiceField(choices=((0, '---------'),), label=u'Заказ', widget=forms.Select(attrs={'class': 'form-control'}))
-    type = forms.ChoiceField(
-        choices=TYPE_CHOICES,
-        label=u'Тип работы',
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -92,17 +81,13 @@ class AdjusterTaskAreaAddForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': u'Текст комментария к задаче'}),
         }
 
-    TYPE_CHOICES = (
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        # (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
-    )
+    TYPE_CHOICES = ((c[0], c[1]) for c in AdjusterTask.TYPE_CHOICES if c[0] != 2)
 
     city = forms.ModelChoiceField(queryset=City.objects.all(), label=u'Город', widget=forms.Select(attrs={'class': 'form-control'}))
     area = forms.ModelChoiceField(queryset=Area.objects.all(), label=u'Район', widget=forms.Select(attrs={'class': 'form-control'}))
     type = forms.ChoiceField(
         choices=TYPE_CHOICES,
+        initial=1,
         label=u'Тип работы',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
@@ -119,17 +104,13 @@ class AdjusterTaskAddForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': u'Текст комментария к задаче'}),
         }
 
-    TYPE_CHOICES = (
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        # (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
-    )
+    TYPE_CHOICES = ((c[0], c[1]) for c in AdjusterTask.TYPE_CHOICES if c[0] != 2)
 
     city = forms.ModelChoiceField(queryset=City.objects.all(), label=u'Город', widget=forms.Select(attrs={'class': 'form-control'}))
     area = forms.ModelChoiceField(queryset=Area.objects.all(), label=u'Район', widget=forms.Select(attrs={'class': 'form-control'}))
     type = forms.ChoiceField(
         choices=TYPE_CHOICES,
+        initial=1,
         label=u'Тип работы',
         widget=forms.Select(attrs={'class': 'form-control'})
     )
@@ -201,13 +182,10 @@ class AdjusterTaskUpdateForm(forms.ModelForm):
 
 
 class AdjusterTaskFilterForm(forms.Form):
-    TYPE_CHOICES = (
+    TYPE_CHOICES = [
         (None, u'---------'),
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
-    )
+    ]
+    TYPE_CHOICES += [(c[0], c[1]) for c in AdjusterTask.TYPE_CHOICES]
 
     city = forms.ModelChoiceField(
         queryset=City.objects.all(),

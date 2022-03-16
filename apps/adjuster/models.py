@@ -1,6 +1,3 @@
-# coding=utf-8
-from PIL import Image
-from django.core.files import File
 from django.urls import reverse
 from django.db import models
 from django.conf import settings
@@ -8,8 +5,7 @@ from imagekit.models import ImageSpecField
 from pilkit.processors import SmartResize
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from pytils.translit import slugify
-from core.files import UploadTo, upload_to, surfacephoto_upload
+from core.files import surfacephoto_upload
 from apps.city.models import City, Surface, Porch
 from core.models import User
 
@@ -109,30 +105,31 @@ def delete_old_image_resize(sender, instance, **kwargs):
 class AdjusterTask(models.Model):
     """
     Задача для монтажника.
-    (Может состоять из точек назначения разных зазаков).
+    (Может состоять из адресов (точек) назначения разных зазаков).
     """
     TYPE_CHOICES = (
-        (0, u'Монтаж новой конструкции'),
-        (1, u'Замена'),
-        (2, u'Ремонт стенда'),
-        (3, u'Демонтаж стенда'),
+        (0, 'Монтаж новой конструкции'),
+        (1, 'Замена'),
+        (2, 'Ремонт стенда'),
+        (3, 'Демонтаж стенда'),
+        (4, 'Осмотр'),
     )
 
-    adjuster = models.ForeignKey(on_delete=models.CASCADE, to=Adjuster, verbose_name=u'Монтажник')
-    type = models.PositiveSmallIntegerField(verbose_name=u'Вид работы', choices=TYPE_CHOICES)
-    date = models.DateField(verbose_name=u'Дата задачи')
-    comment = models.TextField(verbose_name=u'Комментарий', blank=True, null=True)
-    is_closed = models.BooleanField(verbose_name=u'Выполнено', default=False)
-    sent = models.BooleanField(verbose_name=u'Отправлено', default=False)
+    adjuster = models.ForeignKey(on_delete=models.CASCADE, to=Adjuster, verbose_name='Монтажник')
+    type = models.PositiveSmallIntegerField(verbose_name='Вид работы', choices=TYPE_CHOICES)
+    date = models.DateField(verbose_name='Дата задачи')
+    comment = models.TextField(verbose_name='Комментарий', blank=True, null=True)
+    is_closed = models.BooleanField(verbose_name='Выполнено', default=False)
+    sent = models.BooleanField(verbose_name='Отправлено', default=False)
 
     class Meta:
-        verbose_name = u'Монтажник'
-        verbose_name_plural = u'Монтажники'
+        verbose_name = 'Монтажник'
+        verbose_name_plural = 'Монтажники'
         app_label = 'adjuster'
         ordering = ['-date', ]
 
     def __unicode__(self):
-        return u'Задача ID №:%d' % self.id
+        return 'Задача ID №:%d' % self.id
 
     def __str__(self):
         return self.__unicode__()
