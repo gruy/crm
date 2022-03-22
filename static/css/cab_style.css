@@ -6163,6 +6163,7 @@ td.visible-print {
   box-sizing: border-box;
 }
 @media only screen and (max-width: 991px) {
+  .five-col-0,
   .five-col-1,
   .five-col-2,
   .five-col-3,
@@ -6172,6 +6173,7 @@ td.visible-print {
   }
 }
 @media only screen and (max-width: 767px) {
+  .five-col-0,
   .five-col-1,
   .five-col-2,
   .five-col-3,
