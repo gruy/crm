@@ -9,7 +9,6 @@
 .idea/
 *.pyc
 core/migrations/
-/apps/adjuster/migrations
 /cms/db.sqlite3
 .settings/
 .project

@@ -1,12 +1,13 @@
-from django.urls import reverse
-from django.db import models
 from django.conf import settings
-from imagekit.models import ImageSpecField
-from pilkit.processors import SmartResize
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
+from imagekit.models import ImageSpecField
+from pilkit.processors import SmartResize
+
+from apps.city.models import City, Porch, Surface
 from core.files import surfacephoto_upload
-from apps.city.models import City, Surface, Porch
 from core.models import User
 
 __author__ = 'alexy'
@@ -30,14 +31,21 @@ class AdjusterModelManager(models.Manager):
 class Adjuster(models.Model):
     user = models.OneToOneField(on_delete=models.CASCADE, to=User, verbose_name=u'Пользователь')
     city = models.ForeignKey(on_delete=models.CASCADE, to=City, verbose_name=u'Город')
-    cost_mounting = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Оплата за монтаж, руб',
-                                        blank=True, null=True)
-    cost_change = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Оплата за замену, руб',
-                                      blank=True, null=True)
-    cost_repair = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Оплата за ремонт, руб',
-                                      blank=True, null=True)
-    cost_dismantling = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=u'Оплата за демонтаж, руб',
-                                           blank=True, null=True)
+    cost_mounting = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=u'Оплата за монтаж, руб', blank=True, null=True
+    )
+    cost_change = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=u'Оплата за замену, руб', blank=True, null=True
+    )
+    cost_repair = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=u'Оплата за ремонт, руб', blank=True, null=True
+    )
+    cost_dismantling = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=u'Оплата за демонтаж, руб', blank=True, null=True
+    )
+    cost_view = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=u'Оплата за осмотр, руб', blank=True, null=True
+    )
     coord_x = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name=u'Ширина')
     coord_y = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name=u'Долгота')
 
@@ -63,7 +71,9 @@ class SurfacePhoto(models.Model):
         verbose_name = u'Фотография'
         verbose_name_plural = u'Фотографии'
         app_label = 'adjuster'
-        ordering = ['-id', ]
+        ordering = [
+            '-id',
+        ]
 
     def __unicode__(self):
         return u'%s д.%s п.%s' % (self.porch.surface.street.name, self.porch.surface.house_number, self.porch.number)
@@ -81,7 +91,9 @@ class SurfacePhoto(models.Model):
         super(SurfacePhoto, self).save()
 
     porch = models.ForeignKey(on_delete=models.CASCADE, to=Porch, verbose_name=u'Подъезд')
-    adjuster = models.ForeignKey(on_delete=models.CASCADE, to=Adjuster, blank=True, null=True, verbose_name=u'Монтажник')
+    adjuster = models.ForeignKey(
+        on_delete=models.CASCADE, to=Adjuster, blank=True, null=True, verbose_name=u'Монтажник'
+    )
     date = models.DateTimeField(verbose_name=u'Дата фотографии')
     image = models.ImageField(verbose_name=u'Изображение', upload_to=surfacephoto_upload)
     image_resize = ImageSpecField(
@@ -107,6 +119,7 @@ class AdjusterTask(models.Model):
     Задача для монтажника.
     (Может состоять из адресов (точек) назначения разных зазаков).
     """
+
     TYPE_CHOICES = (
         (0, 'Монтаж новой конструкции'),
         (1, 'Замена'),
@@ -126,7 +139,9 @@ class AdjusterTask(models.Model):
         verbose_name = 'Монтажник'
         verbose_name_plural = 'Монтажники'
         app_label = 'adjuster'
-        ordering = ['-date', ]
+        ordering = [
+            '-date',
+        ]
 
     def __unicode__(self):
         return 'Задача ID №:%d' % self.id
@@ -246,6 +261,7 @@ class AdjusterTaskSurface(models.Model):
     """
     Перечень точек назначения (домов, адресов) задачи монтжника
     """
+
     adjustertask = models.ForeignKey(on_delete=models.CASCADE, to=AdjusterTask, verbose_name=u'Задача')
     surface = models.ForeignKey(on_delete=models.CASCADE, to=Surface, verbose_name=u'Поверхность')
     is_closed = models.BooleanField(verbose_name=u'Выполнено', default=False)
@@ -261,8 +277,7 @@ class AdjusterTaskSurface(models.Model):
     def __str__(self):
         return self.__unicode__()
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super(AdjusterTaskSurface, self).save()
         if self.adjustertask.get_closed_surface_count() == self.adjustertask.get_surface_count():
             at = AdjusterTask.objects.get(id=self.adjustertask.id)
@@ -297,7 +312,9 @@ class AdjusterTaskSurface(models.Model):
 
 
 class AdjusterTaskSurfacePorch(models.Model):
-    adjustertasksurface = models.ForeignKey(on_delete=models.CASCADE, to=AdjusterTaskSurface, verbose_name=u'Поверхность для задачи')
+    adjustertasksurface = models.ForeignKey(
+        on_delete=models.CASCADE, to=AdjusterTaskSurface, verbose_name=u'Поверхность для задачи'
+    )
     porch = models.ForeignKey(on_delete=models.CASCADE, to=Porch, verbose_name=u'Подъезд поверхности для задачи')
     is_closed = models.BooleanField(verbose_name=u'Выполнено', default=False)
     complete = models.BooleanField(verbose_name=u'Работы выполнены', default=False)
@@ -313,8 +330,7 @@ class AdjusterTaskSurfacePorch(models.Model):
     def __str__(self):
         return self.__unicode__()
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super(AdjusterTaskSurfacePorch, self).save()
         if self.adjustertasksurface.get_closed_porch_count() == self.adjustertasksurface.get_porch_count():
             ats = AdjusterTaskSurface.objects.get(id=self.adjustertasksurface.id)

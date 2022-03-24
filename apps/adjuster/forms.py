@@ -1,8 +1,7 @@
-# coding=utf-8
 from django import forms
+
 from apps.adjuster.models import Adjuster
 from apps.city.models import City
-from apps.manager.models import Manager
 
 __author__ = 'alexy'
 
@@ -10,7 +9,7 @@ __author__ = 'alexy'
 class AdjusterAddForm(forms.ModelForm):
     class Meta:
         model = Adjuster
-        exclude = ['user', ]
+        exclude = ['user']
         widgets = {
             'city': forms.Select(attrs={'class': 'form-control'}),
         }
@@ -53,10 +52,11 @@ class AdjusterUpdateForm(forms.ModelForm):
 class AdjusterPaymentForm(forms.ModelForm):
     class Meta:
         model = Adjuster
-        fields = ('cost_mounting', 'cost_change', 'cost_repair', 'cost_dismantling')
+        fields = ('cost_mounting', 'cost_change', 'cost_repair', 'cost_dismantling', 'cost_view')
         widgets = {
             'cost_mounting': forms.NumberInput(attrs={'class': 'form-control'}),
             'cost_change': forms.NumberInput(attrs={'class': 'form-control'}),
             'cost_repair': forms.NumberInput(attrs={'class': 'form-control'}),
             'cost_dismantling': forms.NumberInput(attrs={'class': 'form-control'}),
+            'cost_view': forms.NumberInput(attrs={'class': 'form-control'}),
         }
