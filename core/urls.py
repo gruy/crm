@@ -1,7 +1,6 @@
-# coding=utf-8
-from django.urls import include, path, re_path
+from django.urls import path, re_path
 from core.ajax import ymap, ymap_surface, ajax_remove_item
-from core.views import get_robots_txt
+from core.views import get_robots_txt, TermsView
 
 __author__ = 'alexy'
 
@@ -21,4 +20,5 @@ urlpatterns = [
     # re_path(r'^cabinet/login/$', 'cabinet_login', name='login'),
     # re_path(r'^cabinet/logout/$', logout, name='logout'),
 
+    path('terms/', TermsView.as_view()),
 ]
