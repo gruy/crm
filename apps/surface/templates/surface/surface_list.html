@@ -294,8 +294,8 @@
   </div>
   <div id="doc-popup" class="cp-popup" style="display:none" align="center">
         <p class="alert" style="font-size: 26px; margin-bottom: 0px;">Выберите шаблон</p>
-        <a style="width: 140px;; height: 36px; margin-bottom: 5px;" class="btn btn-default" href="{% url 'surface:export-docx' %}?city={{ city_id|default:'' }}&area={{ area_id|default:'' }}&street={{ street|default:'' }}&management={{ management_id|default:'' }}&release_date={{ release_date|default:'' }}&free={{ free|default:0 }}&has_stand={{ has_stand|default:0 }}&client={{ client_id|default:0 }}">Встроенный</a></li>
-        <form name="template-file-form" method="post" enctype="multipart/form-data" action="{% url 'surface:export-docx-from-file' %}?city={{ city_id|default:'' }}&area={{ area_id|default:'' }}&street={{ street|default:'' }}&management={{ management_id|default:'' }}&release_date={{ release_date|default:'' }}&free={{ free|default:0 }}&has_stand={{ has_stand|default:0 }}&client={{ client_id|default:0 }}">
+        <a style="width: 140px;; height: 36px; margin-bottom: 5px;" class="btn btn-default" href="{% url 'surface:export-docx' %}?city={{ city_id|default:'' }}&area={{ area_id|default:'' }}&street={{ street|default:'' }}&management={{ management_id|default:'' }}&date_start={{ date_start|date:'d.m.Y'|default:'' }}&date_end={{ date_end|date:'d.m.Y'|default:'' }}&free={{ free|default:0 }}&has_stand={{ has_stand|default:0 }}&client={{ client_id|default:0 }}">Встроенный</a></li>
+        <form name="template-file-form" method="post" enctype="multipart/form-data" action="{% url 'surface:export-docx-from-file' %}?city={{ city_id|default:'' }}&area={{ area_id|default:'' }}&street={{ street|default:'' }}&management={{ management_id|default:'' }}&date_start={{ date_start|date:'d.m.Y'|default:'' }}&date_end={{ date_end|date:'d.m.Y'|default:'' }}&free={{ free|default:0 }}&has_stand={{ has_stand|default:0 }}&client={{ client_id|default:0 }}">
           {% csrf_token %}
           <input id="id_template" style="width: 140px;" class="btn btn-default" type="file" name="template" placeholder="Выберите файл">
         </form>

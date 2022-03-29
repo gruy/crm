@@ -971,9 +971,14 @@ class SurfaceDocView(DocResponseMixin, ListView):
         city = self.request.GET.get('city')
         area = self.request.GET.get('area')
         street = self.request.GET.get('street')
-        release_date = self.request.GET.get('release_date')
-        free = self.request.GET.get('free')
         has_stand = self.request.GET.get('has_stand')
+        try:
+            date_start = datetime.datetime.strptime(self.request.GET.get('date_start', ''), '%d.%m.%Y')
+            date_end = datetime.datetime.strptime(self.request.GET.get('date_end', ''), '%d.%m.%Y')
+        except ValueError:
+            date_start = datetime.date.today()
+            date_end = datetime.date.today()
+
         if management:
             if int(management) == 0:
                 qs = qs
@@ -987,21 +992,26 @@ class SurfaceDocView(DocResponseMixin, ListView):
             qs = qs.filter(street__area=int(area))
         if street:
             qs = qs.filter(street__name__icontains=street)
-        if free:
-            if int(free) == 1:
-                if release_date:
-                    qs = qs.filter(
-                        release_date__lt=datetime.datetime.strptime(release_date, '%d.%m.%Y')
-                    )
-                else:
-                    qs = qs.filter(free=True)
-            elif int(free) == 2:
-                if release_date:
-                    qs = qs.filter(
-                        release_date__gt=datetime.datetime.strptime(release_date, '%d.%m.%Y')
-                    )
-                else:
-                    qs = qs.filter(free=False)
+
+        flt = (
+            (
+                Q(surface__clientordersurface__clientorder__date_start__gte=date_start)
+                | Q(surface__clientordersurface__clientorder__date_end__gte=date_start)
+            )
+            & Q(surface__clientordersurface__clientorder__date_start__lte=date_end)
+        )
+
+        # 0 - не указано, 1 - свободно, 2 - занято
+        try:
+            free_kind = int(self.request.GET.get('free', 0))
+        except ValueError:
+            free_kind = 0
+
+        if free_kind == 1:
+            qs = qs.exclude(flt)
+        if free_kind == 2:
+            qs = qs.filter(flt)
+
         if has_stand:
             if int(has_stand) == 1:
                 qs = qs.filter(has_stand=True)
