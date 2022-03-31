@@ -93,10 +93,21 @@
                       {% endfor %}
                       </select>
                     </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="id_cos_street">Улица:</label>
+                        <select name="cos_street" id="id_cos_street" class="form-control" data-ajax-url="{% url 'city:get_free_area_surface' %}" data-client-order="{{ object.id }}">
+                          <option value="0">---- Выберите улицу ----</option>
+                          {% for street in streets_list %}
+                            <option value="{{ street.id }}">{{ street.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
                   <div class="clearfix"></div>
                 </div>
                 <div class="surface-list js-surface-list">
-                  <table class="table">
+                  <table class="table" id="order_table">
                     <thead>
                     <tr>
                       <th><input type="checkbox" id="js-select-all" value="">
@@ -123,14 +134,9 @@
             </div>
           </form>
         {% endif %}
-          <div class="col-md-6">
-            <div class="form-group">
-              <input class="form-control" id="table_filter" type="text" placeholder="Поиск по адресу...">
-            </div>
-          </div>
           <form action="{% url 'client:order-remove' %}" method="post" class="js-remove-item-form">{% csrf_token %}
           <div class="col-md-12 surface-list">
-            <table class="table table-hover table-condensed table-bordered table-list" id="order_table">
+            <table class="table table-hover table-condensed table-bordered table-list">
               <thead>
                 <tr>
                   <th>Район</th>

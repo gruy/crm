@@ -157,7 +157,9 @@ def get_area_surfaces(request):
 def get_free_area_surface(request):
     if request.GET.get('area') and request.GET.get('order'):
         surface_list = []
+        streets_list = []
         area_pk = int(request.GET.get('area'))
+        street_id = int(request.GET.get('street_id', 0))
         order = ClientOrder.objects.get(pk=int(request.GET.get('order')))
         surface_qs = Surface.objects.select_related('management').filter(
             street__area=area_pk,
@@ -168,6 +170,12 @@ def get_free_area_surface(request):
             )
             & Q(clientordersurface__clientorder__date_start__lte=order.date_end)
         )
+        if street_id:
+            surface_qs = surface_qs.filter(street_id=street_id)
+        else:
+            streets_list = [
+                {'id': s.id, 'name': s.name} for s in Street.objects.filter(area=area_pk).order_by('name')
+            ]
         # фильтруем поверхности по зоне покрытия клиента
         if order.client.has_limit_surfaces:
             surfaces = ClientSurfaceBind.objects.filter(client=order.client).values_list('surface', flat=True)
@@ -187,8 +195,10 @@ def get_free_area_surface(request):
                     'apart_count': surface.apart_count or '-',
                     'management': surface.management.name if surface.management else '-'
                 })
+
         return {
-            'surface_list': surface_list
+            'surface_list': surface_list,
+            'streets_list': streets_list,
         }
     else:
         return {
