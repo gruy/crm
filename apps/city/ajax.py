@@ -123,6 +123,24 @@ def simple_get_area_streets(request):
         }
 
 
+def _surface_list(surfaces):
+    return [
+        {
+            'id': surface.id,
+            'city': surface.city.name,
+            'street': surface.street.name,
+            'number': surface.house_number,
+            'porch_count': surface.porch_count(),
+            'coord_x': surface.coord_x,
+            'coord_y': surface.coord_y,
+            'floors': surface.floors or '-',
+            'apart_count': surface.apart_count or '-',
+            'management': surface.management.name if surface.management else '-',
+        }
+        for surface in surfaces
+    ]
+
+
 @ajax_request
 def get_area_surfaces(request):
     area_id = request.GET.get('area_id')
@@ -135,21 +153,8 @@ def get_area_surfaces(request):
         .extra(select={'house_number_int': 'CAST(house_number AS INTEGER)'})
         .order_by('street__area', 'street__name', 'house_number_int')
     )
-    for surface in qs:
-        surface_list.append({
-            'id': surface.id,
-            'city': surface.city.name,
-            'street': surface.street.name,
-            'number': surface.house_number,
-            'porch_count': surface.porch_count(),
-            'coord_x': surface.coord_x,
-            'coord_y': surface.coord_y,
-            'floors': surface.floors or '-',
-            'apart_count': surface.apart_count or '-',
-            'management': surface.management.name if surface.management else '-'
-        })
     return {
-        'surface_list': surface_list
+        'surface_list': _surface_list(qs)
     }
 
 
@@ -181,23 +186,11 @@ def get_free_area_surface(request):
             surfaces = ClientSurfaceBind.objects.filter(client=order.client).values_list('surface', flat=True)
             surface_qs = surface_qs.filter(id__in=surfaces)
 
-        for surface in surface_qs:
-            if surface.id:
-                surface_list.append({
-                    'id': surface.id,
-                    'city': surface.city.name,
-                    'street': surface.street.name,
-                    'number': surface.house_number,
-                    'porch_count': surface.porch_count(),
-                    'coord_x': surface.coord_x,
-                    'coord_y': surface.coord_y,
-                    'floors': surface.floors or '-',
-                    'apart_count': surface.apart_count or '-',
-                    'management': surface.management.name if surface.management else '-'
-                })
+        surface_qs = surface_qs.extra(select={'house_number_int': 'CAST(house_number AS INTEGER)'})
+        surface_qs = surface_qs.order_by('street__name', 'house_number_int')
 
         return {
-            'surface_list': surface_list,
+            'surface_list': _surface_list(surface_qs),
             'streets_list': streets_list,
         }
     else:
