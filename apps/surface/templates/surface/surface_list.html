@@ -197,6 +197,7 @@
                   <th>Этажей</th>
                   <th>Квартир</th>
                   <th>Управляющая компания</th>
+                  <th>Провайдеры</th>
                   <th>Заказы</th>
                   <th></th>
                 </tr>
@@ -218,6 +219,11 @@
                   <td>{{ object.floors|default:'-' }}</td>
                   <td>{{ object.apart_count|default:'-' }}</td>
                   <td>{{ object.management.name|default:'-' }}</td>
+                  <td>
+                      {% for bind in object.clientsurfacebind_set.all %}
+                          {{ bind.client }}{% if not forloop.last %}<br />{% endif %}
+                      {%  endfor %}
+                  </td>
                   {#{% surface_is_free object date_start date_end as is_free %}#}
                   {% surface_get_orders object date_start date_end as orders %}
                   <td>
