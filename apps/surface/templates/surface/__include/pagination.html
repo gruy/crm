@@ -1,0 +1,70 @@
+<div class="col-lg-12">
+    <div class="text-center">
+        <ul class="pagination pagination-sm">
+            {% if page_obj.has_previous %}
+                <li>
+                    <a href="{{ URL_WITH_FILTER|default:'?' }}page=1" aria-label="Previous">
+                        <span class="glyphicon glyphicon-fast-backward"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ URL_WITH_FILTER }}page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span class="glyphicon glyphicon-backward"></span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="disabled">
+                    <a href="{{ URL_WITH_FILTER|default:'?' }}page=1" aria-label="Previous">
+                        <span class="glyphicon glyphicon-fast-backward"></span>
+                    </a>
+                </li>
+                <li class="disabled">
+                    <a aria-label="Previous">
+                        <span class="glyphicon glyphicon-backward"></span>
+                    </a>
+                </li>
+            {% endif %}
+            <li class="disabled">
+                <a>{{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</a>
+            </li>
+            {#      {% for i in page_obj.paginator.page_range %}#}
+            {#      <li {% if i == page_obj.number %}class="active"{% endif %}><a href="{{ URL_WITH_FILTER }}page={{ i }}">{{ i }}</a></li>#}
+            {#      {% endfor %}#}
+            {% if page_obj.has_next %}
+                <li>
+                    <a href="{{ URL_WITH_FILTER }}page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span class="glyphicon glyphicon-forward"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ URL_WITH_FILTER }}page={{ page_obj.paginator.num_pages }}" aria-label="Next">
+                        <span class="glyphicon glyphicon-fast-forward"></span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="disabled">
+                    <a aria-label="Next">
+                        <span class="glyphicon glyphicon-forward"></span>
+                    </a>
+                </li>
+                <li class="disabled">
+                    <a href="{{ URL_WITH_FILTER }}page={{ page_obj.paginator.num_pages }}" aria-label="Next">
+                        <span class="glyphicon glyphicon-fast-forward"></span>
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <form action="." method="get" class="client-surfaces__pagination form">
+                    <select name="paginate_by" class="form-control">
+                        <option {% if page_obj.paginator.per_page == 25 %}selected{% endif %}>25</option>
+                        <option {% if page_obj.paginator.per_page == 50 %}selected{% endif %}>50</option>
+                        <option {% if page_obj.paginator.per_page == 75 %}selected{% endif %}>75</option>
+                        <option {% if page_obj.paginator.per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                    <button type="submit" class="btn btn-success">Показать</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+{#{% endif %}#}

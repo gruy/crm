@@ -7044,3 +7044,16 @@ label.error {
 .panel-dashboard .panel-body {
   padding: 0;
 }
+
+.client-surfaces__pagination {
+  display: inline;
+}
+.client-surfaces__pagination select {
+  display: inline !important;
+  height: 29px;
+  margin-left: 30px;
+  width: auto;
+}
+.client-surfaces__pagination button {
+  height: 29px !important;
+}

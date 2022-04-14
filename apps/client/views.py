@@ -841,7 +841,7 @@ class ClientOrderSurfaceRemoveView(BaseRemoveView):
 
 class ClientSurfacesView(ListView):
     model = ClientSurfaceBind
-    paginate_by = 50
+    paginate_by = 25
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -854,6 +854,9 @@ class ClientSurfacesView(ListView):
             'client': self.client,
         }
         return super().get(request, *args, **kwargs)
+
+    def get_paginate_by(self, queryset):
+        return self.request.GET.get('paginate_by', self.paginate_by)
 
     def get_queryset(self):
         return super().get_queryset().filter(client=self.client)
