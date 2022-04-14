@@ -852,6 +852,7 @@ class ClientSurfacesView(ListView):
         self.extra_context = {
             'area_list': self.client.city.area_set.all().order_by('name'),
             'client': self.client,
+            'porches': self.get_queryset().aggregate(s=Sum('surface__porch_total_count'))['s']
         }
         return super().get(request, *args, **kwargs)
 
