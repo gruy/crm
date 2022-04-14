@@ -86,7 +86,7 @@
                 <tr data-id="{{ item.id }}" data-name="{{ item }}" data-model="ClientSurfaceBind" id="id_ClientSurfaceBind_{{ item.id }}">
                   <td>{{ item.surface.street.area.name|default:'Не указано' }}</td>
                   <td>{{ item.surface.street.name|default:'Не указано' }}, д. {{ item.surface.house_number|default:'Не указано' }}</td>
-                  <td>{{ item.num_porch|default:'0' }}</td>
+                  <td>{{ item.surface.porch_total_count|default:'0' }}</td>
                   <td>{{ item.surface.floors|default:'-' }}</td>
                   <td>{{ item.surface.apart_count|default:'-' }}</td>
                   <td>{{ item.surface.management.name|default:'-' }}</td>
