@@ -224,6 +224,8 @@ class AdjusterTask(models.Model):
             cost = self.adjuster.cost_repair
         elif self.type == 3 and self.adjuster.cost_dismantling:
             cost = self.adjuster.cost_dismantling
+        elif self.type == 4 and self.adjuster.cost_view:
+            cost = self.adjuster.cost_view
         else:
             cost = 0
         sum = float(cost) * self.get_porch_count()
