@@ -274,6 +274,9 @@ class Surface(models.Model):
             logger.error(f'Error in Yandex.Map: {e}')
         super(Surface, self).save()
 
+    def providers(self):
+        return self.clientsurfacebind_set.filter(client__has_limit_surfaces=True)
+
 
 class Porch(models.Model):
     """

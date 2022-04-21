@@ -220,7 +220,7 @@
                   <td>{{ object.apart_count|default:'-' }}</td>
                   <td>{{ object.management.name|default:'-' }}</td>
                   <td>
-                      {% for bind in object.clientsurfacebind_set.all %}
+                      {% for bind in object.providers %}
                           {{ bind.client }}{% if not forloop.last %}<br />{% endif %}
                       {%  endfor %}
                   </td>
