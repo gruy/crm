@@ -172,18 +172,24 @@ class ManagementCompany(models.Model):
     leader_function = models.CharField(verbose_name=u'Адрес и комментарии', max_length=455, blank=True, null=True)
     leader_name = models.CharField(verbose_name=u'ФИО руководители', max_length=255, blank=True, null=True)
     phone = models.CharField(verbose_name=u'Контактный телефон', max_length=40, blank=True, null=True)
-    phones = models.TextField(verbose_name=u'Телефоны для docx файла в формате "Аварийка#3-30-23$Газ#3-30-22"',
-                              blank=True, null=True)
+    phones = models.TextField(
+        verbose_name=f'Телефоны для docx файла: первая строка - название, вторая - номер, и так далее',
+        blank=True,
+        null=True,
+    )
+
+    @staticmethod
+    def group_list(data, size):
+        return list(zip(*[data[i::size] for i in range(size)]))
 
     @property
     def doc_phones(self):
         data = []
-        if self.phones and '$' in self.phones and '#' in self.phones:
-            for phone in self.phones.split('$'):
-                data.append({
-                    'type': phone.split('#')[0],
-                    'phone': phone.split('#')[1]
-                })
+        for item in self.group_list(self.phones.split('\n'), 2):
+            try:
+                data.append({'type': item[0], 'phone': item[1]})
+            except IndexError:
+                continue
         return data
 
 
