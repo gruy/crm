@@ -66,7 +66,7 @@
                   <option value="2" {% if has_stand == 2 %}selected="selected"{% endif %}>Стенды отсутствуют</option>
                 </select>
               </div>
-              <div class="five-col-1">
+              <div class="five-col-0">
                 <select name="free" id="free_filter" class="form-control input-sm">
                   <option value="0" {% if free == 0 %}selected="selected"{% endif %}>--- Занятость ---</option>
                   <option value="1" {% if free == 1 %}selected="selected"{% endif %}>Свободна</option>
@@ -97,6 +97,12 @@
                   {% endfor %}
                 </select>
               </div>
+                <div class="five-col-0">
+                    <select name="client_surface_exclude" id="client_surface_exclude" class="form-control input-sm" >
+                        <option value="1">Включить зону покрытия</option>
+                        <option value="2"{% if client_surface_exclude == '2' %}selected="true"{% endif %}>Исключить зону покрытия</option>
+                    </select>
+                </div>
               <div class="five-col-1">
                 <input type="submit" class="btn btn-search" value="Искать поверхности">
               </div>

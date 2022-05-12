@@ -149,7 +149,10 @@ class SurfaceListView(ListView):
             surfaces = ClientSurfaceBind.objects.filter(
                 client__id=self.client_surface
             ).values_list('surface', flat=True)
-            qs = qs.filter(id__in=surfaces)
+            if self.request.GET.get('client_surface_exclude') == '2':
+                qs = qs.exclude(id__in=surfaces)
+            else:
+                qs = qs.filter(id__in=surfaces)
 
         qs = qs.extra(select={'house_number_int': 'CAST(house_number AS INTEGER)'})
         return qs.order_by('street__area', 'street__name', 'house_number_int')
@@ -255,6 +258,7 @@ class SurfaceListView(ListView):
             self.request.session['surface_filtered_list'] = reverse('surface:list')
         context['client_surfaces'] = Client.objects.filter(has_limit_surfaces=True)
         context['client_surface'] = self.client_surface
+        context['client_surface_exclude'] = self.request.GET.get('client_surface_exclude', '1')
         return context
 
     def xls_export(self):
