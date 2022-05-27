@@ -859,6 +859,7 @@ def surface_export(request):
             qs = qs.filter(has_stand=True)
         elif int(has_stand) == 2:
             qs = qs.filter(has_stand=False)
+
     if request.GET.get('client') and int(request.GET.get('client')) != 0:
         today = datetime.datetime.today()
         client_filter = ClientOrderSurface.objects.filter(
@@ -867,6 +868,17 @@ def surface_export(request):
             clientorder__client=int(request.GET.get('client'))
         ).values_list('surface', flat=True)
         qs = qs.filter(id__in=client_filter)
+
+    # фильтруем поверхности по зоне покрытия клиента
+    client_surface = request.GET.get('client_surface', 0)
+    if client_surface:
+        surfaces = ClientSurfaceBind.objects.filter(
+            client__id=client_surface
+        ).values_list('surface', flat=True)
+        if request.GET.get('client_surface_exclude') == '2':
+            qs = qs.exclude(id__in=surfaces)
+        else:
+            qs = qs.filter(id__in=surfaces)
 
     qs = qs.order_by('street__area', 'street__name', 'house_number')
 
