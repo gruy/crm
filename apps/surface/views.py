@@ -1011,10 +1011,10 @@ class SurfaceDocView(DocResponseMixin, ListView):
 
         flt = (
             (
-                Q(surface__clientordersurface__clientorder__date_start__gte=date_start)
-                | Q(surface__clientordersurface__clientorder__date_end__gte=date_start)
+                Q(clientordersurface__clientorder__date_start__gte=date_start)
+                | Q(clientordersurface__clientorder__date_end__gte=date_start)
             )
-            & Q(surface__clientordersurface__clientorder__date_start__lte=date_end)
+            & Q(clientordersurface__clientorder__date_start__lte=date_end)
         )
 
         # 0 - не указано, 1 - свободно, 2 - занято
