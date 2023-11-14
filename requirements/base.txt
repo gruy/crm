@@ -23,4 +23,4 @@ mysqlclient==2.0.3
 django-redis==5.1.0
 isort==5.10.1
 
--e git+https://github.com/pulse-mind/django-suit.git#egg=django-suit
+-e git+https://github.com/pulse-mind/django-suit.git@39fadd1e41bf1fbb08258b50753aa941c0860a77#egg=django-suit

@@ -11,3 +11,9 @@ code_format:
 #	black .
 
 check_and_format: code_check code_format
+
+run:
+	python manage.py runserver
+
+docker_dev:
+	docker-compose up

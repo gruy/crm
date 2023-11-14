@@ -201,7 +201,9 @@ class Surface(models.Model):
     city = models.ForeignKey(on_delete=models.CASCADE, to=City, verbose_name=u'Город')
     street = models.ForeignKey(on_delete=models.CASCADE, to=Street, verbose_name=u'Улица')
     house_number = models.CharField(max_length=50, verbose_name=u'Номер дома')
-    management = models.ForeignKey(on_delete=models.CASCADE, to=ManagementCompany, verbose_name=u'Управляющая контора', blank=True, null=True)
+    management = models.ForeignKey(
+        on_delete=models.CASCADE, to=ManagementCompany, verbose_name=u'Управляющая контора', blank=True, null=True
+    )
     coord_x = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name=u'Ширина')
     coord_y = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name=u'Долгота')
     free = models.BooleanField(default=True)
