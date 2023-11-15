@@ -4,6 +4,13 @@ import pyexcel
 from apps.city.models import Area, City, ManagementCompany, Porch, Street, Surface
 
 
+def _strip(value):
+    try:
+        return value.strip()
+    except AttributeError:
+        return value
+
+
 def address_list_import(request):
     """
     Структура колонок таблицы:
@@ -23,17 +30,18 @@ def address_list_import(request):
         sheet = pyexcel.get_sheet(file_type=extension, file_content=content, start_row=1)
         for row in sheet:
             if row != 'Series_1':
-                city = row[0].strip()
-                area = row[1].strip()
-                street = row[2].strip()
-                house_number = row[3].strip()
+
+                city = _strip(row[0])
+                area = _strip(row[1])
+                street = _strip(row[2])
+                house_number = _strip(row[3])
                 try:
-                    porches = int(row[4].strip())
+                    porches = int(_strip(row[4]))
                 except ValueError:
                     porches = 0
-                company_name = row[5].strip()
+                company_name = _strip(row[5])
                 try:
-                    floors = int(row[6].strip())
+                    floors = int(_strip(row[6]))
                 except ValueError:
                     floors = None
 
