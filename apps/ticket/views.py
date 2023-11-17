@@ -1,8 +1,8 @@
-# coding=utf-8
 from annoying.functions import get_object_or_None
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, UpdateView, CreateView
@@ -72,7 +72,7 @@ class TicketListView(ListView):
         return context
 
 
-class TicketView(CreateView):
+class TicketView(LoginRequiredMixin, CreateView):
     model = Ticket
     fields = ('name', 'phone', 'city', 'email')
     success_url = reverse_lazy('ok')
