@@ -12,6 +12,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
+USE_X_FORWARDED_HOST = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

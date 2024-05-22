@@ -32,9 +32,9 @@ def site_setup(request):
 class SubdomainMiddleware(MiddlewareMixin):
     def process_request(self, request):
         domain_parts = request.get_host().split('.')
-        if (len(domain_parts) > 2):
+        if len(domain_parts) > 2:
             subdomain = domain_parts[0]
-            if (subdomain.lower() == 'www'):
+            if subdomain.lower() in ['www']:
                 subdomain = None
             domain = '.'.join(domain_parts[1:])
         else:
