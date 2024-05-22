@@ -478,11 +478,11 @@
 
 
 {% cache cache_time map current_city %}
-  {% if MAIN_PAGE %}
-    <script src="{% static 'landing/js/city_map.js' %}"></script>
-  {% else %}
+{#  {% if MAIN_PAGE %}#}
+{#    <script src="{% static 'landing/js/city_map.js' %}"></script>#}
+{#  {% else %}#}
     {% include 'landing/__include/surface-map.html' with surface_list=current_city.surface_set.all %}
-  {% endif %}
+{#  {% endif %}#}
 {% endcache %}
 {% if main_setup %}
   {{ main_setup.bottom_js|safe }}
