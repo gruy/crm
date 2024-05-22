@@ -17,16 +17,20 @@ ymaps.ready(function () {
     ];
   {% else %}
     var surface_points = [
-          [{{ current_city.coord_y|safe }}, {{ current_city.coord_x|safe }}],
+        {% for city in cities %}
+          [{{ city.coord_y|safe }}, {{ city.coord_x|safe }}],
+        {% endfor %}
     ];
     var surface_baloons = [
-          ['{{ current_city.name|safe }}', '{{ current_city.porch_count|default:"0" }}'],
+        {% for city in cities %}
+          ['{{ city.name|safe }}', '{{ city.porch_count|default:"0" }}'],
+        {% endfor %}
     ];
   {% endif %}
 
     var myMap = new ymaps.Map('YMapsID', {
-            center: surface_points[0],
-            zoom: 9,
+            center: {% if surface_list %}surface_points[0]{% else %}[51.560090, 73.460906]{% endif %},
+            zoom: {% if surface_list %}9{% else %}4{% endif %},
             behaviors: ['default', 'scrollZoom']
         }, {
             searchControlProvider: 'yandex#search'

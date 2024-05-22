@@ -43,6 +43,7 @@ class LandingView(TemplateView):
             'blockeffective_list': blockeffective_qs,
             'blockreview_list': blockreview_qs,
             'current_city': current_city,
+            'cities': City.objects.filter(coord_x__isnull=False, coord_y__isnull=False),
             'setup': setup,
             'city_list': city_qs,
             'cache_time': 1800,
