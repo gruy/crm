@@ -1,4 +1,5 @@
-# coding=utf-8
+import datetime
+
 from annoying.functions import get_object_or_None
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
@@ -45,7 +46,8 @@ class LandingView(TemplateView):
             'setup': setup,
             'city_list': city_qs,
             'cache_time': 1800,
-            'main_setup': Setup.objects.filter(city__isnull=True).values('top_js', 'bottom_js').first()
+            'main_setup': Setup.objects.filter(city__isnull=True).values('top_js', 'bottom_js').first(),
+            'today': datetime.date.today(),
         })
         return context
 

@@ -94,7 +94,7 @@ h4 {
     float: left;
     margin: 39px 50px 0 0;
     color: #e35f13;
-    width: 315px;
+    width: 270px;
     /*height: 100px;*/
 }
 .video-find {
@@ -133,11 +133,24 @@ h4 {
 }
 .header-phone {
     float: left;
-    padding: 63px 0 0;
+    padding: 39px 0 0;
 }
 .header-number {
     margin: 0 0 4px;
     font-size: 30px;
+}
+.header-number a {
+    color: #000000;
+    text-decoration: none;
+}
+.header-number-logos {
+    column-gap: 10px;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+.header-number-logos img {
+    width: 32px;
 }
 .header-callback {
     font-size: 14px;

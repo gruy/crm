@@ -1,4 +1,3 @@
-# coding=utf-8
 from django import forms
 
 from apps.city.models import City
@@ -19,6 +18,9 @@ class SetupForm(forms.ModelForm):
             'meta_desc': forms.Textarea(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'whatsapp_logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'telegram_logo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'video_find': forms.TextInput(attrs={'class': 'form-control'}),
             'top_js': forms.Textarea(attrs={'class': 'form-control'}),
             'bottom_js': forms.Textarea(attrs={'class': 'form-control'}),

@@ -1,4 +1,3 @@
-# coding=utf-8
 from PIL import Image
 from django.conf import settings
 from django.db import models
@@ -44,6 +43,9 @@ class Setup(models.Model):
     meta_desc = models.TextField(verbose_name=u'Мета описание', blank=True, null=True)
     email = models.EmailField(verbose_name=u'e-mail для приёма заявок', blank=True)
     phone = models.CharField(verbose_name=u'Контактный телефон', blank=True, null=True, max_length=20)
+    phone_logo = models.ImageField(verbose_name=u'Логотип Телефон', blank=True, null=True, upload_to=upload_to)
+    whatsapp_logo = models.ImageField(verbose_name=u'Логотип WhatsApp', blank=True, null=True, upload_to=upload_to)
+    telegram_logo = models.ImageField(verbose_name=u'Логотип Telegram', blank=True, null=True, upload_to=upload_to)
     video_find = models.CharField(verbose_name=u'Видео: как найти наш офис', blank=True, null=True, max_length=256)
     video = models.TextField(verbose_name=u'HTML-код видео: что получать наши клиенты', blank=True, null=True)
     top_js = models.TextField(verbose_name=u'Скрипты в <HEAD>..</HEAD>', blank=True)

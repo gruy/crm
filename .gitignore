@@ -2,7 +2,6 @@
 /apps/superviser/migrations
 /apps/moderator/migrations
 /apps/ticket/migrations
-/apps/landing/migrations
 /apps/incoming/migrations
 /apps/manager/migrations
 /apps/city/migrations
@@ -15,3 +14,4 @@ core/migrations/
 .pydevproject
 .python-version
 .volumes/
+.env
