@@ -16,7 +16,7 @@
     
 {#    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />#}
     <title>{{ setup.meta_title|default:'Рекламное агентство Дружба' }}</title>
-    <link media="all" rel="stylesheet" type="text/css" href="{% static 'landing/css/all.css' %}" />
+    <link media="all" rel="stylesheet" type="text/css" href="{% static 'landing/css/all.css' %}?v=1716385325" />
 
 {% if main_setup %}
   {{ main_setup.top_js|safe }}
@@ -478,11 +478,11 @@
 
 
 {% cache cache_time map current_city %}
-  {% if MAIN_PAGE %}
-    <script src="{% static 'landing/js/city_map.js' %}"></script>
-  {% else %}
+{#  {% if MAIN_PAGE %}#}
+{#    <script src="{% static 'landing/js/city_map.js' %}"></script>#}
+{#  {% else %}#}
     {% include 'landing/__include/surface-map.html' with surface_list=current_city.surface_set.all %}
-  {% endif %}
+{#  {% endif %}#}
 {% endcache %}
 {% if main_setup %}
   {{ main_setup.bottom_js|safe }}
