@@ -42,7 +42,7 @@ def address_list_import(request):
                 company_name = _strip(row[5])
                 try:
                     floors = int(_strip(row[6]))
-                except ValueError:
+                except (IndexError, ValueError):
                     floors = None
 
                 try:

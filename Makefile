@@ -1,4 +1,4 @@
-# default target
+SHELL := /bin/bash
 .DEFAULT_GOAL := code_check
 
 code_check:
@@ -13,7 +13,7 @@ code_format:
 check_and_format: code_check code_format
 
 run:
-	python manage.py runserver
+	@source .venv/bin/activate && python manage.py runserver
 
 docker_dev:
 	docker-compose up
